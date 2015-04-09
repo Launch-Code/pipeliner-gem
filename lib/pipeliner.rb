@@ -17,8 +17,8 @@ module Pipeliner
 	def self.grab_all_candidates
 		page = 0 
 		all_candidates = get('https://us.pipelinersales.com/rest_services/v1/us_CompanyJobPipelineClone/Contacts') 
-		#while ( (page * 25) < Pipeliner.candidate_total(all_candidates.headers['content-range'])) do
-		while ( (page * 25) < 51) do
+		while ( (page * 25) < Pipeliner.candidate_total(all_candidates.headers['content-range'])) do
+		#while ( (page * 25) < 51) do
 			page = page + 1
 			all_candidates.concat(get('https://us.pipelinersales.com/rest_services/v1/us_CompanyJobPipelineClone/Contacts', query: {offset: page*25})) 
 		end
