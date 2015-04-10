@@ -22,6 +22,15 @@ describe Pipeliner do
 
 	it 'can grab all candidates' do
 		candidates = Pipeliner.grab_all_candidates
-		expect(candidates.count).to be== Pipeliner.candidate_total(candidates.headers['content-range'])
+		expect(candidates.count).to be== Pipeliner.total_rows(candidates.headers['content-range'])
+	end
+
+	it 'can grab data' do
+		expect(Pipeliner.grab_some_data.count).to be== 25
+	end
+
+	it 'can grab all the data' do
+		data = Pipeliner.grab_all_data
+		expect(data.count).to be== Pipeliner.total_rows(data.headers['content-range'])
 	end
 end
