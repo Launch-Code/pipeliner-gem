@@ -41,14 +41,32 @@ module Pipeliner
 		all_data	
 	end
 
-	def self.grab_all_notes
+	def self.grab_all_candidate_notes
 		page = 0
-		all_data = get('/Notes')
+		all_data = get('/Notes', query: {filter: 'ADDRESSBOOK_ID::::ne'})
 		while ( (page * 25) < Pipeliner.total_rows(all_data.headers['content-range'])) do
 			page = page + 1
-			all_data.concat(get('/Notes', query: {offset: page*25} ))
+			all_data.concat(get('/Notes', query: {filter: 'ADDRESSBOOK_ID::::ne'}))
 		end
+	
+		# grab all users of pipeliner and populate email addresses
+		all_users = Pipeliner.grab_all_users
+		data_hash = Hash[all_users.map { |sym| [sym['ID'], sym['EMAIL']] }]
+		all_data.each do |row|
+			row[:email] = data_hash[row['OWNER_ID']]
+		end
+
 		all_data
+	end
+
+	def self.grab_all_users
+		page = 0
+		all_clients = get('/Clients')
+		while ( (page * 25) < Pipeliner.total_rows(all_clients.headers['content-range'])) do
+			page = page + 1
+			all_clients.concat(get('/Clients', query: {offset: page*25} ))
+		end
+		all_clients
 	end
 
 	def self.total_rows(offset_header)

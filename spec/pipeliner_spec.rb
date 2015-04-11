@@ -35,7 +35,12 @@ describe Pipeliner do
 	end
 
 	it 'can grab all the notes' do
-		notes = Pipeliner.grab_all_notes
+		notes = Pipeliner.grab_all_candidate_notes
 		expect(notes.count).to be== Pipeliner.total_rows(notes.headers['content-range'])
+	end
+
+	it 'every note should have an email address' do
+		notes = Pipeliner.grab_all_candidate_notes
+		expect(notes[0][:email]).to_not be_nil
 	end
 end
