@@ -17,7 +17,7 @@ describe Pipeliner do
 	end
 
 	it 'can parse the candidate total from the headers' do
-		expect(Pipeliner.candidate_total 'items 0-24/1044').to be== 1044
+		expect(Pipeliner.total_rows 'items 0-24/1044').to be== 1044
 	end
 
 	it 'can grab all candidates' do
@@ -32,5 +32,10 @@ describe Pipeliner do
 	it 'can grab all the data' do
 		data = Pipeliner.grab_all_data
 		expect(data.count).to be== Pipeliner.total_rows(data.headers['content-range'])
+	end
+
+	it 'can grab all the notes' do
+		notes = Pipeliner.grab_all_notes
+		expect(notes.count).to be== Pipeliner.total_rows(notes.headers['content-range'])
 	end
 end
