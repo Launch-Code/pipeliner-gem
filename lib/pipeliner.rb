@@ -42,6 +42,7 @@ module Pipeliner
 	end
 
 	def self.grab_all_candidate_notes
+		binding.pry
 		page = 0
 		all_data = get('/Notes', query: {filter: 'ADDRESSBOOK_ID::::ne'})
 		while ( (page * 25) < Pipeliner.total_rows(all_data.headers['content-range'])) do
@@ -52,8 +53,11 @@ module Pipeliner
 		# grab all users of pipeliner and populate email addresses
 		all_users = Pipeliner.grab_all_users
 		data_hash = Hash[all_users.map { |sym| [sym['ID'], sym['EMAIL']] }]
+		all_candidates = Pipeliner.grab_all_candidates
+		candidates_hash = Hash[all_candidates.map { |sym| [sym['ID'], sym['EMAIL1']] } ]
 		all_data.each do |row|
 			row[:email] = data_hash[row['OWNER_ID']]
+			row[:candidate_email] = candidates_hash[row['ADDRESSBOOK_ID']]
 		end
 
 		all_data
