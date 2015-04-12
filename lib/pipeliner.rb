@@ -8,7 +8,6 @@ module Pipeliner
 	base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
 
 	def self.grab_a_few_candidates
-		binding.pry
 		get('/Contacts')
 	end
 
@@ -42,7 +41,6 @@ module Pipeliner
 	end
 
 	def self.grab_all_candidate_notes
-		binding.pry
 		page = 0
 		all_data = get('/Notes', query: {filter: 'ADDRESSBOOK_ID::::ne'})
 		while ( (page * 25) < Pipeliner.total_rows(all_data.headers['content-range'])) do
