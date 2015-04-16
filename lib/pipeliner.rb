@@ -3,8 +3,8 @@ require 'httparty'
 
 module Pipeliner
 	include HTTParty
-	format :json
-	basic_auth 'us_LC1_HM2NKTQAJ2Q2I87B', 'jKNomMFAFzou7hKB'
+	format :json 
+  basic_auth Rails.secrets.pipeliner_name, Rails.secrets.pipeliner_secret 
 	base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
 
 	def self.grab_a_few_candidates
