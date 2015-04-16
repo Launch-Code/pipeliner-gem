@@ -22,7 +22,9 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+  set pipeliner_name and pipeliner_secret in the secrets.yml file
+  call Pipeliner.initialize
+  Then use Pipeliner.grab_some_candidates ect...
 
 ## Development
 
