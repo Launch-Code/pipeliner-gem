@@ -1,12 +1,12 @@
 require "pipeliner/version"
 require 'httparty'
 
-module Pipeliner
+class Pipeliner
 	include HTTParty
   def initialize
-    basic_auth Rails.application.secrets.pipeliner_name, Rails.application.secrets.pipeliner_secret 
+    basic_auth Rails.application.secrets.pipeliner_name, Rails.application.secrets.pipeliner_secret
     base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
-    format :json 
+    format :json
   end
 
 	def self.grab_a_few_candidates
@@ -14,16 +14,16 @@ module Pipeliner
 	end
 
 	def self.grab_more_candidates(page)
-		get('/Contacts', query: {offset: page*25}) 
+		get('/Contacts', query: {offset: page*25})
 	end
 
-	def self.grab_all_candidates
-		page = 0 
-		all_candidates = get('/Contacts') 
+	def self.grab_all(collection)
+		page = 0
+		all_candidates = get("/#{collection}")
 		while ( (page * 25) < Pipeliner.total_rows(all_candidates.headers['content-range'])) do
 		#while ( (page * 25) < 51) do
 			page = page + 1
-			all_candidates.concat(get('/Contacts', query: {offset: page*25})) 
+			all_candidates.concat(get("/#{collection}", query: {offset: page*25}))
 		end
 		all_candidates
 	end
@@ -39,7 +39,7 @@ module Pipeliner
 			page = page + 1
 			all_data.concat(get('/Data?prettyprint=true', query: {offset: page*25}))
 		end
-		all_data	
+		all_data
 	end
 
 	def self.grab_all_candidate_notes
@@ -49,7 +49,7 @@ module Pipeliner
 			page = page + 1
 			all_data.concat(get('/Notes', query: {filter: 'ADDRESSBOOK_ID::::ne'}))
 		end
-	
+
 		# grab all users of pipeliner and populate email addresses
 		all_users = Pipeliner.grab_all_users
 		data_hash = Hash[all_users.map { |sym| [sym['ID'], sym['EMAIL']] }]
