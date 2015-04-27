@@ -3,7 +3,7 @@ require 'httparty'
 
 class Pipeliner
 	include HTTParty
-  def initialize
+  def self.initialize
     basic_auth Rails.application.secrets.pipeliner_name, Rails.application.secrets.pipeliner_secret
     base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
     format :json
