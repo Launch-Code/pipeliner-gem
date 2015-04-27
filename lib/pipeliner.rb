@@ -1,7 +1,7 @@
 require "pipeliner/version"
 require 'httparty'
 
-class Pipeliner
+module Pipeliner
 	include HTTParty
   def self.initialize
     basic_auth Rails.application.secrets.pipeliner_name, Rails.application.secrets.pipeliner_secret
