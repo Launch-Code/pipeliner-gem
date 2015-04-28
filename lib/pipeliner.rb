@@ -9,12 +9,12 @@ module Pipeliner
     format :json
   end
 
-	def self.grab_a_few_candidates
-		get('/Contacts')
+	def self.grab_a_few(collection)
+		get("/#{collection}")
 	end
 
-	def self.grab_more_candidates(page)
-		get('/Contacts', query: {offset: page*25})
+	def self.grab_more(collection, page)
+		get("/#{collection}", query: {offset: page*25})
 	end
 
 	def self.grab_all(collection)
