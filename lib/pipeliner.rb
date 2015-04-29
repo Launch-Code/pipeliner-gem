@@ -30,8 +30,8 @@ module Pipeliner
 	end
 
 	def self.grab_all(collection, options = {})
-		load_only_query = options[:load_only].nil? || options[:fileter].empty? ? '' : '&loadonly=' + options[:load_only].join('|')
-		remove_archived = options[:filters].nil? || options[:fileter].empty? ? '' : '&filter=' + options[:filters].join('|')
+		load_only_query = options[:load_only].nil? || options[:load_only].empty? ? '' : '&loadonly=' + options[:load_only].join('|')
+		remove_archived = options[:filters].nil? || options[:filters].empty? ? '' : '&filter=' + options[:filters].join('|')
 		page = 0
 		all_collection = get("/#{collection}")
 		requests = []
