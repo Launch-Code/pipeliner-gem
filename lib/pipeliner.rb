@@ -4,8 +4,10 @@ require 'typhoeus'
 
 module Pipeliner
 	include HTTParty
-  def self.initialize
-    basic_auth 'us_LC1_HU96U9XZ6JBOB07V', '3V8EfF70LbqMkFPb'
+  def self.initialize (username, secret)
+		@username = username
+		@secret = secret
+    basic_auth @username, @secret
     base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
     format :json
   end
@@ -22,21 +24,26 @@ module Pipeliner
 		self.grab_all 'Contacts'
 	end
 
-	def self.grab_all(collection)
+	def self.grab_all_opportunities (options = {})
+		default = {filter: ['IS_ARCHIVE::1::ne']}.merge(options)
+		self.grab_all 'Opportunities', default
+	end
+
+	def self.grab_all(collection, options = {})
+		load_only_query = options[:load_only].nil? || options[:fileter].empty? ? '' : '&loadonly=' + options[:load_only].join('|')
+		remove_archived = options[:filters].nil? || options[:fileter].empty? ? '' : '&filter=' + options[:filters].join('|')
 		page = 0
-		all_candidates = get("/#{collection}")
+		all_collection = get("/#{collection}")
 		requests = []
-		hydra = Typhoeus::Hydra.new
-		while ( (page * 25) < Pipeliner.total_rows(all_candidates.headers['content-range'])) do
-			page = page + 1
-		#	all_candidates.concat(get("/#{collection}", query: {offset: page*25}))
-			request =  Typhoeus::Request.new('https://us.pipelinersales.com/rest_services/v1/us_LC1/Contacts', userpwd: 'us_LC1_HU96U9XZ6JBOB07V:3V8EfF70LbqMkFPb')
-			hydra.queue request	
+		hydra = Typhoeus::Hydra.new max_concurrency: 100
+		while ( (page * 25) < Pipeliner.total_rows(all_collection.headers['content-range'])) do
+			request =  Typhoeus::Request.new("https://us.pipelinersales.com/rest_services/v1/us_LC1/#{collection}?offset=#{page*25}#{remove_archived}#{load_only_query}", userpwd: "#{@username}:#{@secret}")
+			hydra.queue request
 			requests.push request
+			page += 1
 		end
 		hydra.run
-		binding.pry
-		#all_candidates
+		requests.map { |req| JSON.parse(req.response.body) }.flatten
 	end
 
 	def self.grab_some_data
@@ -44,13 +51,7 @@ module Pipeliner
 	end
 
 	def self.grab_all_data
-		page = 0
-		all_data = get('/Data?prettyprint=true')
-		while ( (page * 25) < Pipeliner.total_rows(all_data.headers['content-range'])) do
-			page = page + 1
-			all_data.concat(get('/Data?prettyprint=true', query: {offset: page*25}))
-		end
-		all_data
+		grab_all('Data')
 	end
 
 	def self.grab_all_candidate_notes

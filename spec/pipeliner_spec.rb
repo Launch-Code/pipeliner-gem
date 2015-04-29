@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 describe Pipeliner do
-	before { Pipeliner.initialize }
-
+	before { Pipeliner.initialize 'us_LC1_HU96U9XZ6JBOB07V', '3V8EfF70LbqMkFPb'  }
   it 'has a version number' do
     expect(Pipeliner::VERSION).not_to be nil
   end
@@ -25,6 +24,12 @@ describe Pipeliner do
 	it 'can grab all candidates' do
 		candidates = Pipeliner.grab_all_candidates
 		expect(candidates.count).to be== Pipeliner.total_rows(candidates.headers['content-range'])
+	end
+
+	it 'can grab all opportunities' do
+		opportunities = Pipeliner.grab_all('Opportunities')
+		expected_number_of_opportunities = Pipeliner.grab_a_few('Opportunities').headers['content-range'].split('/').last.to_i
+		expect(opportunities.count).to eq expected_number_of_opportunities
 	end
 
 	it 'can grab data' do
