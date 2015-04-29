@@ -46,12 +46,9 @@ module Pipeliner
 		requests.map { |req| JSON.parse(req.response.body) }.flatten
 	end
 
-	def self.grab_some_data
-		get('/Data?prettyprint=true')
-	end
-
 	def self.grab_all_data
-		grab_all('Data')
+		data = grab_all('Data')
+		Hash[data.map { |sym| [sym['ID'].to_s, sym['VALUE']] }]
 	end
 
 	def self.grab_all_candidate_notes
