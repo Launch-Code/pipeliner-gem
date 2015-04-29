@@ -29,4 +29,5 @@ Gem::Specification.new do |spec|
 	spec.add_development_dependency "pry-doc"
 	spec.add_development_dependency "pry-byebug"
 	spec.add_dependency "httparty", "~> 0.13.1"
+	spec.add_dependency "typhoeus"
 end

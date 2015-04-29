@@ -1,10 +1,11 @@
 require "pipeliner/version"
 require 'httparty'
+require 'typhoeus'
 
 module Pipeliner
 	include HTTParty
   def self.initialize
-    basic_auth Rails.application.secrets.pipeliner_name, Rails.application.secrets.pipeliner_secret
+    basic_auth 'us_LC1_HU96U9XZ6JBOB07V', '3V8EfF70LbqMkFPb'
     base_uri 'https://us.pipelinersales.com/rest_services/v1/us_LC1'
     format :json
   end
@@ -17,15 +18,25 @@ module Pipeliner
 		get("/#{collection}", query: {offset: page*25})
 	end
 
+	def self.grab_all_candidates
+		self.grab_all 'Contacts'
+	end
+
 	def self.grab_all(collection)
 		page = 0
 		all_candidates = get("/#{collection}")
+		requests = []
+		hydra = Typhoeus::Hydra.new
 		while ( (page * 25) < Pipeliner.total_rows(all_candidates.headers['content-range'])) do
-		#while ( (page * 25) < 51) do
 			page = page + 1
-			all_candidates.concat(get("/#{collection}", query: {offset: page*25}))
+		#	all_candidates.concat(get("/#{collection}", query: {offset: page*25}))
+			request =  Typhoeus::Request.new('https://us.pipelinersales.com/rest_services/v1/us_LC1/Contacts', userpwd: 'us_LC1_HU96U9XZ6JBOB07V:3V8EfF70LbqMkFPb')
+			hydra.queue request	
+			requests.push request
 		end
-		all_candidates
+		hydra.run
+		binding.pry
+		#all_candidates
 	end
 
 	def self.grab_some_data

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Pipeliner do
+	before { Pipeliner.initialize }
+
   it 'has a version number' do
     expect(Pipeliner::VERSION).not_to be nil
   end
