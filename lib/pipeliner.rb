@@ -25,7 +25,7 @@ module Pipeliner
 	end
 
 	def self.grab_all_opportunities (options = {})
-		default = {filter: ['IS_ARCHIVE::1::ne']}.merge(options)
+		default = {filters: ['IS_ARCHIVE::0::eq']}.merge(options)
 		self.grab_all 'Opportunities', default
 	end
 
