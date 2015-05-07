@@ -52,13 +52,13 @@ module Pipeliner
 	end
 
 	def self.grab_all_stages
-		data = grab_all('Stages')
-		Hash[data.map { |sym| [sym['ID'].to_s, sym['STAGE_NAME']] }]
+		stages = grab_all('Stages')
+		Hash[stages.map { |sym| [sym['ID'].to_s, sym['STAGE_NAME']] }]
 	end
 
 	def self.grab_all_company_notes
 		notes = grab_all('Notes')
-		Hash[data.map { |sym| [sym['OPPTY_ID'].to_s, sym['NOTE']] }]
+		Hash[notes.map { |sym| [sym['OPPTY_ID'].to_s, sym['NOTE']] }]
 	end
 
 	def self.grab_all_candidate_notes
