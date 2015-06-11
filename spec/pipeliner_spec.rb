@@ -32,6 +32,12 @@ describe Pipeliner do
 		expect(opportunities.count).to eq expected_number_of_opportunities
 	end
 
+	it 'can grab all contacts' do
+		contacts = Pipeliner.grab_all_contacts
+		expected_number_of_contacts = Pipeliner.grab_a_few('Contacts').headers['content-range'].split('/').last.to_i
+		expect(contacts.count).to eq expected_number_of_contacts
+	end
+
 	it 'can grab data' do
 		expect(Pipeliner.grab_some_data.count).to be== 25
 	end
