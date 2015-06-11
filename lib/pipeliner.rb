@@ -34,7 +34,6 @@ module Pipeliner
 		contacts = self.grab_contact_hash
 		accounts = self.grab_account_hash
 		opportunities = self.grab_all_opportunities
-		binding.pry
 		opportunities.each { |opportunity| opportunity.each { |key, value| opportunity[key] = @data[value] unless @data[value].nil?  } }
 		opportunities.each { |opportunity| opportunity["Contacts"] = opportunity["CONTACT_RELATIONS"].collect { |relation| contacts[relation["CONTACT_ID"]] } }
 		opportunities.each { |opportunity| opportunity["Accounts"] = opportunity["ACCOUNT_RELATIONS"].collect { |relation| accounts[relation["ACCOUNT_ID"]] } }
