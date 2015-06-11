@@ -29,9 +29,37 @@ module Pipeliner
 		self.grab_all 'Opportunities', default
 	end
 
-	def self.grab_all_contacts (options = {})
-		default = {}.merge(options)
-		self.grab_all 'Contacts', default
+	def self.grab_all_hydrated_opportunities (options = {})
+		@data ||= self.grab_all_data
+		contacts = self.grab_contact_hash
+		accounts = self.grab_account_hash
+		opportunities = self.grab_all_opportunities
+		binding.pry
+		opportunities.each { |opportunity| opportunity.each { |key, value| opportunity[key] = @data[value] unless @data[value].nil?  } }
+		opportunities.each { |opportunity| opportunity["Contacts"] = opportunity["CONTACT_RELATIONS"].collect { |relation| contacts[relation["CONTACT_ID"]] } }
+		opportunities.each { |opportunity| opportunity["Accounts"] = opportunity["ACCOUNT_RELATIONS"].collect { |relation| accounts[relation["ACCOUNT_ID"]] } }
+	end
+
+	def self.grab_account_hash (options = {})
+		accounts = self.grab_all_accounts options
+		Hash[accounts.map{|account| [account['ID'], account]}]
+	end
+
+	def self.grab_all_accounts(options = {})
+		@data ||= self.grab_all_data
+		accounts = self.grab_all 'Accounts', options
+		accounts.each{ |account| account.each { |key, value| account[key] = @data[value] unless @data[value].nil? } }
+	end
+
+	def self.grab_contact_hash (options = {})
+		contacts = self.grab_all_company_contacts
+		Hash[contacts.map{|contact| [contact['ID'], contact]}]
+	end
+
+	def self.grab_all_company_contacts (options = {})
+		default = {filters: ['ContactType::PY-7FFFFFFF-1A5F8328-D6E8-4D4D-88A2-79D929834987::eq']}.merge(options)
+		contacts = self.grab_all 'Contacts', default
+		
 	end
 
 	def self.grab_all(collection, options = {})

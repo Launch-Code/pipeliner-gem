@@ -32,10 +32,16 @@ describe Pipeliner do
 		expect(opportunities.count).to eq expected_number_of_opportunities
 	end
 
-	it 'can grab all contacts' do
+	it 'can grab all contacts with data' do
 		contacts = Pipeliner.grab_all_contacts
-		expected_number_of_contacts = Pipeliner.grab_a_few('Contacts').headers['content-range'].split('/').last.to_i
-		expect(contacts.count).to eq expected_number_of_contacts
+	end
+
+	it 'can grab a hash of contacts' do
+		contact_hash = Pipeliner.grab_contact_hash
+	end
+
+	it 'can grab hydrated opportunities' do
+		opportunities = Pipeliner.grab_all_hydrated_opportunities
 	end
 
 	it 'can grab data' do
@@ -43,8 +49,8 @@ describe Pipeliner do
 	end
 
 	it 'can grab all the data' do
-		data = Pipeliner.grab_all_data
-		expect(data.count).to be== Pipeliner.total_rows(data.headers['content-range'])
+		data = Pipeliner.grab_a_few 'Data'
+		expect(Pipeliner.total_rows(data.headers['content-range'])).to be== Pipeliner.grab_all_data.count
 	end
 
 	it 'can grab all the notes' do
