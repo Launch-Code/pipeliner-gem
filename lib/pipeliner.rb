@@ -56,9 +56,10 @@ module Pipeliner
 	end
 
 	def self.grab_all_company_contacts (options = {})
+    @data ||= self.grab_all_data
 		default = {filters: ['ContactType::PY-7FFFFFFF-1A5F8328-D6E8-4D4D-88A2-79D929834987::eq']}.merge(options)
 		contacts = self.grab_all 'Contacts', default
-		
+		contacts.each{ |contact| contact.each { |key, value| contact[key] = @data[value] unless @data[value].nil? } }	
 	end
 
 	def self.grab_all(collection, options = {})
